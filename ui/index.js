@@ -1,49 +1,79 @@
 window.addEventListener("DOMContentLoaded", () => {
+    // alias
     const $ = document.querySelector.bind(document);
     const $$ = document.querySelectorAll.bind(document);
+    const C = document.createElement.bind(document);
 
+    // data
+    const KVS = {
+        "authorization_endpoint": null,
+        "token_endpoint": null,
+        "userinfo_endpoint": null,
+        "client_id": null,
+        "redirect_uri": null,
+        "client_secret": null,
+        "response_type": null,
+        "response_mode": null,
+        "scope": null,
+        "state": null,
+        "nonce": null,
+    };
+
+    // generate URL encoded query string
+    const QS = (...keys) => {
+        const q = new URLSearchParams();
+        for (const key of keys) {
+            q.append(key, KVS[key]);
+        }
+        return q.toString();
+    };
+
+    // reread UI inputs to update KVS
+    const UpdateKVS = () => {
+        Object.keys(KVS).forEach((k) => {
+            const iE = $('#' + k);
+            if (iE) {
+                KVS[k] = iE.value.trim();
+            }
+        });
+        UpdateLoginURL();
+    }
+
+    /////////////////////////////////////////////////// UI ///////////////////////////////////////////
     // OP dicovery
     (() => {
         const areaDiscover = $("#areaDiscover");
-        const authEP_E = $('#authorization_endpoint');
-        const tokenEP_E = $('#token_endpoint');
-        const userinfoEP_E = $('#userinfo_endpoint');
-        const btnDiscoverOP = $("#discoverOP");
         const issuer = $("#issuer").value;
         const updateOP = () => {
-            const url =  "proxy/" + issuer + "/.well-known/openid-configuration";
+            const url = "proxy/" + issuer + "/.well-known/openid-configuration";
             (async () => {
                 try {
                     const resp = await fetch(url);
                     const body = await resp.json();
                     areaDiscover.textContent = JSON.stringify(body, null, "    ");
-                    authEP_E.value = body["authorization_endpoint"];
-                    tokenEP_E.value = body["token_endpoint"];
-                    userinfoEP_E.value = body["userinfo_endpoint"];
-                    userinfoEP_E.dispatchEvent(new Event("change"));
+                    $('#authorization_endpoint').value = body["authorization_endpoint"];
+                    $('#token_endpoint').value = body["token_endpoint"];
+                    $('#userinfo_endpoint').value = body["userinfo_endpoint"];
+
                     UpdateKVS();
+
                 } catch (e) {
                     areaDiscover.textContent = e;
-                    console.log(e);
                 }
             })();
         };
-        btnDiscoverOP.addEventListener("click", ()=>{ updateOP(); });
+
+        $("#discoverOP").addEventListener("click", () => { updateOP(); });
         updateOP();
     })();
 
-    // checkBox
-    (()=>{
+    // deatail OP config checkBox
+    (() => {
         const areaDiscoverE = $("#areaDiscover");
-        const ckBoxE = $("#ckShowOP");
-        if(ckBoxE == null || areaDiscoverE == null){
-            console.log("ckBoxE or areaDiscover is null");
-            return;
-        }
-        ckBoxE.addEventListener("click", (event)=>{
-            if(event.target.checked){
+        $("#ckShowOP").addEventListener("click", (event) => {
+            if (event.target.checked) {
                 areaDiscoverE.style.display = "block"
-            }else{
+            } else {
                 areaDiscoverE.style.display = "none"
             }
         });
@@ -77,53 +107,18 @@ window.addEventListener("DOMContentLoaded", () => {
         });
     })();
 
-    // global data set
-    const KVS = {
-        "authorization_endpoint": null,
-        "token_endpoint": null,
-        "userinfo_endpoint": null,
-        "client_id": null,
-        "redirect_uri": null,
-        "client_secret": null,
-        "response_type": null,
-        "response_mode": null,
-        "scope": null,
-        "state": null,
-        "nonce": null,
-    };
-    const QS = (...keys) => {
-        const q = new URLSearchParams();
-        for (const key of keys) {
-            q.append(key, KVS[key]);
-        }
-        return q.toString();
-    };
-    const UpdateKVS = ()=>{
-            Object.keys(KVS).forEach((k) => {
-                const iE = $(`#${k}`);
-                if(iE){
-                    KVS[k] = iE.value.trim();
-                }
+    // generate login URL
+    const UpdateLoginURL = () => {
+        const loginURL = KVS['authorization_endpoint'] + "?" +
+            QS("client_id", "redirect_uri", "scope", "response_type", "response_mode", "state", "nonce");
 
-            });
-        }
-    // update login URL
+        $("#txtLoginURL").textContent = loginURL;
+    };
+
     (() => {
-        const updateLoginURL = () => {
-            UpdateKVS();
-            console.log(KVS);
-            // generate login URL 
-            let loginURL = KVS['authorization_endpoint'] + "?" +
-                QS("client_id", "redirect_uri", "scope", "response_type", "response_mode", "state", "nonce");
-
-            const txtLoginURLE = $("#txtLoginURL");
-            txtLoginURLE.textContent = loginURL;
-        };
-
-        const inputs = $$("input");
-        inputs.forEach((i) => {
+        $$("input").forEach((i) => {
             i.addEventListener("change", () => {
-                updateLoginURL();
+                UpdateKVS();
             });
         });
     })();
@@ -137,26 +132,25 @@ window.addEventListener("DOMContentLoaded", () => {
 
     // collect callback (code...)
     (() => {
-        $("#txtCallback").textContent = document.documentURI;
         const u = new URL(document.documentURI);
         const q = u.searchParams;
         const h = new URLSearchParams(u.hash.substring(1));
         h.forEach((v, k) => {
             q.append(k, v);
         });
-        console.log(q);
 
-        if(q.get("code") == null){
-            console.log("code is null");
+        console.log(q);
+        // this page as login page
+        if (q.size == 0){
             return;
         }
 
-        const inputs = $$("input");
-        inputs.forEach((i) => {
-            i.addEventListener("change", () => {
-                updateGetTokensURL();
-            });
-        });
+        // this page as call back page
+        $("#txtCallback").textContent = document.documentURI;
+        if (q.get("code") == null) {
+            console.log("code is null");
+            return;
+        }
 
         const updateGetTokensURL = () => {
             KVS["code"] = q.get("code");
@@ -165,6 +159,8 @@ window.addEventListener("DOMContentLoaded", () => {
             const getTokensURL = "method: POST\nhost: " + KVS["token_endpoint"] + "\ndata:" + tokenQ.toString();
             $("#txtGetTokensURL").textContent = getTokensURL;
         }
+
+        updateGetTokensURL();
     })();
 
     // get tokens
@@ -184,13 +180,13 @@ window.addEventListener("DOMContentLoaded", () => {
                 body = await resp.json();
                 txtTokensE.textContent = JSON.stringify(body, "", "    ");
                 KVS["access_token"] = body["access_token"];
-                urlUserInfoE.textContent = "method: GET\n" + 
-                    "host: " + KVS["userinfo_endpoint"] + "\n" +  
+                urlUserInfoE.textContent = "method: GET\n" +
+                    "host: " + KVS["userinfo_endpoint"] + "\n" +
                     "Authorization: Bearer " + KVS["access_token"];
                 // decode id_token
                 const id_token = JSON.parse(atob(body["id_token"].split(".")[1]));
                 $("#txtIDToken").textContent = JSON.stringify(id_token, "", "   ");
-                
+
             } catch (e) {
                 txtTokensE.textContent = e;
             }
@@ -208,7 +204,7 @@ window.addEventListener("DOMContentLoaded", () => {
             try {
                 const resp = await fetch("proxy/" + KVS["userinfo_endpoint"], {
                     method: "GET",
-                    headers:{
+                    headers: {
                         "Authorization": "Bearer " + KVS["access_token"],
                     },
                 });
