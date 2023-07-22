@@ -13,7 +13,10 @@ main {
 }
 
 input {
-    width: 350px;
+    width: 400px;
+}
+table tr td:first-child {
+    width: 150px;
 }
 input[type=checkbox]{
     width: auto;
