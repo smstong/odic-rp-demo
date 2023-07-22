@@ -1,0 +1,62 @@
+* {
+    box-sizing: border-box;
+}
+main {
+    display: flex;
+    flex-direction: column;
+}
+
+#areaDiscover {
+    width: 800px;
+    height: 100px;
+    display: none;
+}
+
+input {
+    width: 350px;
+}
+input[type=checkbox]{
+    width: auto;
+}
+
+.warning{
+    color: red;
+}
+
+a{
+    text-decoration: none;
+}
+h1{
+    text-align: center;
+}
+h2{
+    background-color: lightblue;
+}
+
+.note{
+    color: blue;
+}
+
+footer{
+    text-align: center;
+}
+
+.big-btn{
+    width: 100px;
+    height: 50px;
+    font-weight: bold;
+}
+.small-btn{
+    width: 60px;
+    font-size: 12px;
+}
+
+.terminal{
+    font-family: 'Courier New', Courier, monospace;
+    width: 1000px;
+    height: 300px;
+}
+
+#txtLoginURL {
+    height: 100px;
+}

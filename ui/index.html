@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta id="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OIDC RP Demo</title>
+    <link rel="stylesheet" href="main.css" />
+    <script src="index.js"></script>
+</head>
+
+<body>
+    <header>
+        <h1>OIDC RP Demo</h1>
+    </header>
+    <main>
+        <div id="RP">
+            <h2>OIDC RP configuration</h2>
+            <p class="note">Fill in the registered RP metadata</p>
+            <table>
+                <tr>
+                    <td><label>client_id</label> </td>
+                    <td><input id="client_id" value="demo_rp_client" readonly /></td>
+                </tr>
+                <tr>
+                    <td><label>redirect_uri</label></td>
+                    <td><input id="redirect_uri" value="https://can.login.utoronto.ca" readonly /></td>
+                </tr>
+                <tr>
+                    <td><label>client_secret</label></td>
+                    <td><input type="text" id="client_secret" value="topsecret" readonly /></td>
+                </tr>
+            </table>
+        </div>
+        <div id="OP">
+            <h2>OIDC OP configuration</h2>
+            <p class="note">Fill in the endpoints or discover them automatically by clicking "Discover".</p>
+            <table>
+                <tr>
+                    <td><label>issuer</label> </td>
+                    <td><input id="issuer" value="https://idpz.utorauth.utoronto.ca" /></td>
+                    <td><button class="small-btn" id="discoverOP">Discover</button></td>
+                </tr>
+                <tr>
+                    <td><label>authorization_endpoint</label> </td>
+                    <td><input id="authorization_endpoint" value="" /></td>
+                </tr>
+                <tr>
+                    <td><label>token_endpoint</label></td>
+                    <td><input id="token_endpoint" value="" /></td>
+                </tr>
+                <tr>
+                    <td><label>userinfo_endpoint</label></td>
+                    <td><input id="userinfo_endpoint" value="" /></td>
+                </tr>
+            </table>
+            <div>
+                <input type="checkbox" id="ckShowOP" style="width:10px;"/>
+                <label for="ckShowOP">details</label>
+                <textarea readonly id="areaDiscover"></textarea>
+            </div>
+        </div>
+        <div id="AUTH">
+            <h2>Authorization Request</h2>
+            <p class="note">
+                This access point is to be accessed from a browser.
+                The response is to redirect to the backend of the client.
+            </p>
+            <table>
+                <tr>
+                    <td><label>response_type</label></td>
+                    <td><input id="response_type" value="code" /></td>
+                    <td><span class="warning" id="oidc_flow"></span></td>
+                </tr>
+                <tr>
+                    <td><label>scope</label></td>
+                    <td><input id="scope" value="openid email" /></td>
+                </tr>
+                <tr>
+                    <td><a href="doc.html#response_mode" target="_blank">response_mode</a></td>
+                    <td><input id="response_mode" value="query" /></td>
+                </tr>
+                <tr>
+                    <td><label>state</label></td>
+                    <td><input id="state" value="xxx" /></td>
+                </tr>
+                <tr>
+                    <td><label>nonce</label></td>
+                    <td><input id="nonce" value="yyy" /></td>
+                </tr>
+            </table>
+            <div>
+                <p>login URL:</p>
+                <textarea id="txtLoginURL" class="terminal"></textarea><br>
+                <button class="big-btn" id="btnStart">Login</button><br>
+                <p>Callback:</p>
+                <textarea id="txtCallback" class="terminal"></textarea>
+            </div>
+        </div>
+        <div id="Tokens">
+            <h2>Get Tokens</h2>
+            <textarea class="terminal" id="txtGetTokensURL"></textarea>
+            <div>
+               <button id="btnGetTokens" class="big-btn">Get Tokens</button> 
+            </div>
+            <textarea class="terminal" id="txtTokens"></textarea>
+            <p>Decoded id_token:</p>
+            <textarea class="terminal" id="txtIDToken"></textarea>
+        </div>
+        <div id="UserInfo">
+            <h2>Get UserInfo</h2>
+            <textarea class="terminal" id="txtGetUserInfoURL"></textarea>
+            <div>
+               <button id="btnGetUserInfo" class="big-btn">Get UserInfo</button> 
+            </div>
+            <textarea class="terminal" id="txtUserInfo"></textarea>
+        </div>
+    </main>
+    <footer>
+        <p>footer</p>
+    </footer>
+</body>
+
+</html>

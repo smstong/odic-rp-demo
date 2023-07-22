@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <header></header>
+    <main>
+        <div id="response_mode">
+            <h2>
+                About response_mode
+            </h2>
+            <ul>
+                <li>fragment:
+                    <pre> HTTP Redirect to https://redirect_uri#code=xxxx</pre>
+                    <p>Beacuse fragment is not included with redirection based on http protocol, front end
+                        javascript
+                        must
+                        be
+                        used to forward fragment to backend if needed.</p>
+                </li>
+                <li>query:
+                    <pre> HTTP Redirect to https://redirect_uri?code=xxxx</pre>
+                </li>
+                <li>form_post:
+                    <pre>html file with hidden form automatically submitted by javascript.</pre>
+                </li>
+            </ul>
+        </div>
+    </main>
+    <footer></footer>
+</body>
+
+</html>
