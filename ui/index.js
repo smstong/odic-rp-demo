@@ -147,9 +147,12 @@ window.addEventListener("DOMContentLoaded", () => {
 
         // this page as call back page
         $("#txtCallback").textContent = document.documentURI;
-        if (q.get("code") == null) {
-            console.log("code is null");
-            return;
+
+        // for implicit flow
+        if(q.get("id_token")){
+            $("#txtImplicitToken").textContent = JSON.stringify(JSON.parse(
+                atob(q.get("id_token").split(".")[1])
+            ), "", "    ");
         }
 
         const updateGetTokensURL = () => {
@@ -159,8 +162,11 @@ window.addEventListener("DOMContentLoaded", () => {
             const getTokensURL = "method: POST\nhost: " + KVS["token_endpoint"] + "\ndata:" + tokenQ.toString();
             $("#txtGetTokensURL").textContent = getTokensURL;
         }
+        // for code or hybrid flow
+        if (q.get("code")) {
+            updateGetTokensURL();
+        }
 
-        updateGetTokensURL();
     })();
 
     // get tokens
