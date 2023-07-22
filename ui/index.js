@@ -1,12 +1,15 @@
 window.addEventListener("DOMContentLoaded", () => {
+    const $ = document.querySelector.bind(document);
+    const $$ = document.querySelectorAll.bind(document);
+
     // OP dicovery
     (() => {
-        const areaDiscover = document.querySelector("#areaDiscover");
-        const authEP_E = document.querySelector('#authorization_endpoint');
-        const tokenEP_E = document.querySelector('#token_endpoint');
-        const userinfoEP_E = document.querySelector('#userinfo_endpoint');
-        const btnDiscoverOP = document.querySelector("#discoverOP");
-        const issuer = document.querySelector("#issuer").value;
+        const areaDiscover = $("#areaDiscover");
+        const authEP_E = $('#authorization_endpoint');
+        const tokenEP_E = $('#token_endpoint');
+        const userinfoEP_E = $('#userinfo_endpoint');
+        const btnDiscoverOP = $("#discoverOP");
+        const issuer = $("#issuer").value;
         const updateOP = () => {
             const url =  "proxy/" + issuer + "/.well-known/openid-configuration";
             (async () => {
@@ -31,8 +34,8 @@ window.addEventListener("DOMContentLoaded", () => {
 
     // checkBox
     (()=>{
-        const areaDiscoverE = document.querySelector("#areaDiscover");
-        const ckBoxE = document.querySelector("#ckShowOP");
+        const areaDiscoverE = $("#areaDiscover");
+        const ckBoxE = $("#ckShowOP");
         if(ckBoxE == null || areaDiscoverE == null){
             console.log("ckBoxE or areaDiscover is null");
             return;
@@ -49,9 +52,9 @@ window.addEventListener("DOMContentLoaded", () => {
 
     // update OIDC auth flow
     (() => {
-        const inputResponseType = document.querySelector("#response_type");
-        const inputResponseMode = document.querySelector("#response_mode");
-        const oidcFlowE = document.querySelector("#oidc_flow");
+        const inputResponseType = $("#response_type");
+        const inputResponseMode = $("#response_mode");
+        const oidcFlowE = $("#oidc_flow");
         const setOidcFlow = (response_type) => {
             if (response_type == "code") {
                 oidcFlowE.textContent = "authorization code flow";
@@ -97,7 +100,7 @@ window.addEventListener("DOMContentLoaded", () => {
     };
     const UpdateKVS = ()=>{
             Object.keys(KVS).forEach((k) => {
-                const iE = document.querySelector(`#${k}`);
+                const iE = $(`#${k}`);
                 if(iE){
                     KVS[k] = iE.value.trim();
                 }
@@ -113,11 +116,11 @@ window.addEventListener("DOMContentLoaded", () => {
             let loginURL = KVS['authorization_endpoint'] + "?" +
                 QS("client_id", "redirect_uri", "scope", "response_type", "response_mode", "state", "nonce");
 
-            const txtLoginURLE = document.querySelector("#txtLoginURL");
+            const txtLoginURLE = $("#txtLoginURL");
             txtLoginURLE.textContent = loginURL;
         };
 
-        const inputs = document.querySelectorAll("input");
+        const inputs = $$("input");
         inputs.forEach((i) => {
             i.addEventListener("change", () => {
                 updateLoginURL();
@@ -127,14 +130,14 @@ window.addEventListener("DOMContentLoaded", () => {
 
     // login button
     (() => {
-        document.querySelector("#btnStart").addEventListener("click", () => {
-            window.location = document.querySelector("#txtLoginURL").textContent;
+        $("#btnStart").addEventListener("click", () => {
+            window.location = $("#txtLoginURL").textContent;
         });
     })();
 
     // collect callback (code...)
     (() => {
-        document.querySelector("#txtCallback").textContent = document.documentURI;
+        $("#txtCallback").textContent = document.documentURI;
         const u = new URL(document.documentURI);
         const q = u.searchParams;
         const h = new URLSearchParams(u.hash.substring(1));
@@ -148,7 +151,7 @@ window.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        const inputs = document.querySelectorAll("input");
+        const inputs = $$("input");
         inputs.forEach((i) => {
             i.addEventListener("change", () => {
                 updateGetTokensURL();
@@ -160,15 +163,15 @@ window.addEventListener("DOMContentLoaded", () => {
             KVS["grant_type"] = "authorization_code";
             const tokenQ = QS("grant_type", "code", "client_id", "client_secret");
             const getTokensURL = "method: POST\nhost: " + KVS["token_endpoint"] + "\ndata:" + tokenQ.toString();
-            document.querySelector("#txtGetTokensURL").textContent = getTokensURL;
+            $("#txtGetTokensURL").textContent = getTokensURL;
         }
     })();
 
     // get tokens
     (() => {
         const getTokens = async () => {
-            const txtTokensE = document.querySelector("#txtTokens");
-            const urlUserInfoE = document.querySelector("#txtGetUserInfoURL");
+            const txtTokensE = $("#txtTokens");
+            const urlUserInfoE = $("#txtGetUserInfoURL");
             const q = QS("grant_type", "code", "client_id", "client_secret");
             try {
                 const resp = await fetch("proxy/" + KVS["token_endpoint"], {
@@ -186,14 +189,14 @@ window.addEventListener("DOMContentLoaded", () => {
                     "Authorization: Bearer " + KVS["access_token"];
                 // decode id_token
                 const id_token = JSON.parse(atob(body["id_token"].split(".")[1]));
-                document.querySelector("#txtIDToken").textContent = JSON.stringify(id_token, "", "   ");
+                $("#txtIDToken").textContent = JSON.stringify(id_token, "", "   ");
                 
             } catch (e) {
                 txtTokensE.textContent = e;
             }
         };
 
-        document.querySelector("#btnGetTokens").addEventListener("click", () => {
+        $("#btnGetTokens").addEventListener("click", () => {
             getTokens();
         });
     })();
@@ -201,7 +204,7 @@ window.addEventListener("DOMContentLoaded", () => {
     // get userinfo
     (() => {
         const getUserInfo = async () => {
-            const txtUserInfoE = document.querySelector("#txtUserInfo");
+            const txtUserInfoE = $("#txtUserInfo");
             try {
                 const resp = await fetch("proxy/" + KVS["userinfo_endpoint"], {
                     method: "GET",
@@ -216,7 +219,7 @@ window.addEventListener("DOMContentLoaded", () => {
             }
         };
 
-        document.querySelector("#btnGetUserInfo").addEventListener("click", () => {
+        $("#btnGetUserInfo").addEventListener("click", () => {
             getUserInfo();
         });
     })();
