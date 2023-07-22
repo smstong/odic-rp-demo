@@ -64,7 +64,9 @@ func (s *Server) serveFile(w http.ResponseWriter, r *http.Request) {
 func (s *Server) Proxy(w http.ResponseWriter, r *http.Request) {
 	httpClient := &http.Client{}
 	url := strings.TrimPrefix(r.URL.RequestURI(), s.homeURL+"proxy/")
-
+	if strings.HasPrefix(url, "https:/") && !strings.HasPrefix(url, "https://") {
+		url = strings.Replace(url, ":/", "://", 1)
+	}
 	log.Println("target: " + url)
 
 	req, err := http.NewRequest(r.Method, url, r.Body)
