@@ -6,6 +6,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
     // data
     const KVS = {
+        "issuer": null,
         "authorization_endpoint": null,
         "token_endpoint": null,
         "userinfo_endpoint": null,
@@ -19,15 +20,6 @@ window.addEventListener("DOMContentLoaded", () => {
         "nonce": null,
     };
 
-    // generate URL encoded query string
-    const QS = (...keys) => {
-        const q = new URLSearchParams();
-        for (const key of keys) {
-            q.append(key, KVS[key]);
-        }
-        return q.toString();
-    };
-
     // reread UI inputs to update KVS
     const UpdateKVS = () => {
         Object.keys(KVS).forEach((k) => {
@@ -37,14 +29,46 @@ window.addEventListener("DOMContentLoaded", () => {
             }
         });
         UpdateLoginURL();
-    }
+    };
+
+    // save KVS to localstorage
+    const SaveKVS = ()=>{
+        Object.keys(KVS).forEach((k)=>{
+            localStorage.setItem(k, KVS[k]);
+        });
+    };
+
+    // read KVS from localstroage
+    const LoadKVS = ()=>{
+        Object.keys(KVS).forEach((k)=>{
+            KVS[k] = localStorage.getItem(k);
+        });
+        // update UI
+        Object.keys(KVS).forEach((k)=>{
+            const inputUI = $('#' + k);
+            if(inputUI){
+                inputUI.value = KVS[k];
+            }
+        });
+    };
+
+    // generate URL encoded query string
+    const QS = (...keys) => {
+        const q = new URLSearchParams();
+        for (const key of keys) {
+            q.append(key, KVS[key]);
+        }
+        return q.toString();
+    };
+
 
     /////////////////////////////////////////////////// UI ///////////////////////////////////////////
+    LoadKVS();
     // OP dicovery
     (() => {
-        const areaDiscover = $("#areaDiscover");
-        const issuer = $("#issuer").value;
         const updateOP = () => {
+            const areaDiscover = $("#areaDiscover");
+            const issuer = $("#issuer").value;
             const url = "proxy/" + issuer + "/.well-known/openid-configuration";
             (async () => {
                 try {
@@ -123,9 +147,10 @@ window.addEventListener("DOMContentLoaded", () => {
         });
     })();
 
-    // login button
+    // login button, go to OP
     (() => {
         $("#btnStart").addEventListener("click", () => {
+            SaveKVS();
             window.location = $("#txtLoginURL").textContent;
         });
     })();
