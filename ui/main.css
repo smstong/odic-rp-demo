@@ -1,7 +1,21 @@
 * {
     box-sizing: border-box;
 }
+.container{
+    margin: 0 100px;
+    display: grid;
+    grid-template-areas: 
+        "header"
+        "main"
+        "footer"
+    ;
+    background-color: azure;
+}
+header{
+    grid-area: header;
+}
 main {
+    grid-area: main;
     display: flex;
     flex-direction: column;
 }
@@ -33,7 +47,8 @@ h1{
     text-align: center;
 }
 h2{
-    background-color: lightblue;
+    color: white;
+    background-color:lightgray;
 }
 
 .note{
@@ -41,6 +56,7 @@ h2{
 }
 
 footer{
+    grid-area: footer;
     text-align: center;
 }
 
