@@ -46,9 +46,12 @@ func (s *Server) serveFile(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
 		log.Println("Todo: need to relay post to font end")
 	}
+	log.Println(s.devMode)
 	if s.devMode {
+		log.Println("using OS file system")
 		http.StripPrefix(s.homeURL, http.FileServer(http.Dir("ui"))).ServeHTTP(w, r)
 	} else {
+		log.Println("using embeded file system")
 		uiFS, err := fs.Sub(UI, "ui")
 		if err != nil {
 			panic(err)

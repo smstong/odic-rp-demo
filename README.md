@@ -7,7 +7,7 @@ $ ./oidc-client -h  # for help
 
 e.g.
 ```
-./oidc-client -keyFile my.server.com.key -certFile my.server.com.crt -devMode false 
+./oidc-client -keyFile my.server.com.key -certFile my.server.com.crt -devMode=false 
 ```
 Then open a browser to access https://my.server.com.
 
