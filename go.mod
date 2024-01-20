@@ -1,3 +1,3 @@
-module example.com/oidc-client
+module github.com/smstong/oidc-rp-demo
 
-go 1.19
+go 1.21.4
