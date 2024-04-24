@@ -199,7 +199,16 @@ window.addEventListener("DOMContentLoaded", () => {
         const getTokens = async () => {
             const txtTokensE = $("#txtTokens");
             const urlUserInfoE = $("#txtGetUserInfoURL");
-            const q = QS("grant_type", "code", "client_id", "client_secret");
+            let q = null;
+
+            // private client
+            if (KVS['client_secret']){
+                q = QS("grant_type", "code", "client_id", "client_secret");
+            }
+            // public client
+            else {
+                q = QS("grant_type", "code", "client_id");
+            }
             try {
                 const resp = await fetch("proxy/" + KVS["token_endpoint"], {
                     method: "POST",
